@@ -113,18 +113,13 @@ module Enumerable
 
     def my_inject(*args)
         sum = 0
+        i = 0
+        raise ArgumentError, "wrong number of arguments (given 3, expected 0..2)" if args.length > 2
 
         if (args[1].is_a?(Symbol) && args[0].is_a?(Integer))
             sum = args[0]
             self.my_each { |element| sum = sum.method(args[1]).call(element) }
-        elsif (args[0].is_a?(Symbol))
-            i = 0
-            self.my_each do |element|
-                (i == 0) ? sum += element : sum = sum.method(args[0]).call(element)
-                i += 1
-            end
         elsif (args.length == 0 && block_given?)
-            i = 0
             self.my_each do |element|
                 (i == 0) ? sum += element : sum = yield(sum, element) 
                 i += 1
@@ -132,6 +127,25 @@ module Enumerable
         elsif (args[0].is_a?(Integer) && block_given?)
             sum = args[0]
             self.my_each { |element| sum = yield(sum, element) }
+        elsif (args.length == 1 && block_given? == false)
+            if args[0].class != Symbol && args[0].class != String
+                raise TypeError, "#{args[0]} (is not a symbol nor a string)"
+            elsif args[0].is_a?(Symbol)
+                self.my_each do |element|
+                    (i == 0) ? sum += element : sum = sum.method(args[0]).call(element)
+                    i += 1
+                end
+            elsif args[0].is_a?(String)
+                operators = [:+, :-, :*, :/, :==, :=~]
+                if operators.my_any? { |o| o == args[0].to_sym }
+                    self.my_each do |element|
+                        (i == 0) ? sum += element : sum = sum.method(args[0].to_sym).call(element)
+                        i += 1
+                    end
+                else
+                    raise NoMethodError, "undefined method '#{args[0]}' for 1:Integer"
+                end
+            end
         end
         sum
     end
@@ -142,3 +156,4 @@ end
 def multiply_els(array)
     array.my_inject { |accumulator, element| accumulator * element }
 end
+
