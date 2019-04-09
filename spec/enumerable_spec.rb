@@ -12,17 +12,6 @@ describe Enumerable do
     end
   end
 
-  # describe "#my_each_with_index" do
-  #   it "returns the receiver of my_each_with_index" do
-  #     expect(["a", "b", "c"].my_each_with_index {|l| l }).to eql(["a", "b", "c"])
-  #   end
-# 
-  #   it "returns the enumerator of the reciever" do
-  #     expect(["a", "b", "c"].my_each_with_index).to be_an Enumerator
-  #     expect(["a", "b", "c"].my_each_with_index.to_a).to eql(["a", "b", "c"])
-  #   end
-  # end
-
   describe "#my_select" do
     it "returns a new array with all the even numbers of the receiver." do
       expect([10, 25, 50, 101].my_select { |n| n.even? }).to eql([10, 50])
